@@ -93,26 +93,29 @@ def ask(request: QueryRequest):
     # 2. IF ACTION NEEDED → CALL n8n
     # --------------------------------------------------------
     if response["needs_action"] == "YES":
-        print("[API] Action detected → Triggering n8n workflow...")
+        if not name:
+            print("[API] Action detected but no name provided → Skipping n8n.")
+        else:
+            print("[API] Action detected → Triggering n8n workflow...")
 
-        try:
-            # Send POST request to n8n webhook
-            res = requests.post(
-                N8N_WEBHOOK_URL,   #  destination (n8n)
-                json={             #  data sent to n8n
-                    "query": request.query,
-                    "name": name,
-                    "answer": response["answer"],
-                    "sources": response["sources"]
-                },
-                timeout=5  # prevent hanging if n8n is slow
-            )
+            try:
+                # Send POST request to n8n webhook
+                res = requests.post(
+                    N8N_WEBHOOK_URL,   #  destination (n8n)
+                    json={             #  data sent to n8n
+                        "query": request.query,
+                        "name": name,
+                        "answer": response["answer"],
+                        "sources": response["sources"]
+                    },
+                    timeout=5  # prevent hanging if n8n is slow
+                )
 
-            print(f"[API] n8n status: {res.status_code}")
-            print(f"[API] n8n response: {res.text}")
+                print(f"[API] n8n status: {res.status_code}")
+                print(f"[API] n8n response: {res.text}")
 
-        except Exception as e:
-            print(f"[API] n8n error: {str(e)}")
+            except Exception as e:
+                print(f"[API] n8n error: {str(e)}")
 
     else:
         print("[API] No action needed")

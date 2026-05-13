@@ -19,6 +19,10 @@ if "last_response" not in st.session_state:
     st.session_state.last_response = None
     st.session_state.last_query = ""
     st.session_state.ticket_name = ""
+if "last_page" not in st.session_state:
+    st.session_state.last_page = ""
+if "tickets_refresh" not in st.session_state:
+    st.session_state.tickets_refresh = 0
 
 # Injecting Custom CSS for a VERY GOOD UI
 st.markdown(
@@ -299,7 +303,7 @@ with st.sidebar:
     st.markdown("## Navigation")
     page = st.radio(
         "Choose a View",
-        ["💬 Chat Assistant", "🎫 Tickets Dashboard"],
+        ["💬 Chat Assistant", "🎫 Tickets Table"],
         label_visibility="collapsed"
     )
     
@@ -309,12 +313,15 @@ with st.sidebar:
         <div class="sidebar-card">
             <div class="sidebar-card-title">System Status</div>
             <div class="sidebar-row"><span class="status-dot"></span> Live API</div>
-            <div class="sidebar-row">Data refresh: 60s</div>
             <div class="sidebar-row">Languages: AR / EN</div>
         </div>
         """,
         unsafe_allow_html=True
     )
+
+if page == "🎫 Tickets Table" and st.session_state.last_page != page:
+    st.session_state.tickets_refresh += 1
+st.session_state.last_page = page
 
 
 # =========================
@@ -433,17 +440,22 @@ if page == "💬 Chat Assistant":
                 chips_html = "".join([f"<span class='source-chip'>📄 {html.escape(str(s))}</span>" for s in sources])
                 st.markdown(f"<div>{chips_html}</div>", unsafe_allow_html=True)
 
-elif page == "🎫 Tickets Dashboard":
-    st.markdown("### 🎫 Tickets Dashboard")
+elif page == "🎫 Tickets Table":
+    st.markdown("### 🎫 Tickets Table")
     st.markdown("<p style='color:#5a5a5a; margin-bottom: 20px;'>View and manage all telecom support tickets fetched live from the central system.</p>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([8, 2])
+    with col2:
+        if st.button("🔄 Refresh Data", use_container_width=True):
+            st.session_state.tickets_refresh += 1
 
-    @st.cache_data(show_spinner=False, ttl=60)
-    def _load_tickets(url):
+    @st.cache_data(show_spinner=False)
+    def _load_tickets(url, refresh_token):
         return pd.read_csv(url)
 
     with st.spinner("Loading tickets from live database..."):
         try:
-            df = _load_tickets(SHEET_URL)
+            df = _load_tickets(SHEET_URL, st.session_state.tickets_refresh)
             if df.empty:
                 st.info("No tickets available at the moment.")
             else:

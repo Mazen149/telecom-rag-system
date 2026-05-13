@@ -8,6 +8,12 @@
 ![SentenceTransformers](https://img.shields.io/badge/SentenceTransformers-5.5-0A66C2)
 ![Groq](https://img.shields.io/badge/Groq-LLM-FF6B00)
 
+## 🚀 Live Demo
+
+Experience the NileTel Arabic AI Assistant in action!
+
+👉 <b><a href="https://telecom-rag-system.streamlit.app/" style="color: #007bff; text-decoration: none;">Launch the Live Demo Here</a></b>
+
 RAG-based telecom support assistant for Arabic and English with hybrid retrieval, query rewriting, and ticket automation. The UI is built with Streamlit and the API runs on FastAPI. Ticket creation is triggered automatically via n8n when the answer implies an action, and the UI asks for the user name only in those cases.
 
 ## Features
@@ -42,23 +48,43 @@ Then edit `.env`:
 GROQ_API_KEY=your_key_here
 ```
 
-### 2) Install dependencies
+### Installation & Running Options
 
-Using pip:
+Choose one of the following methods to run the project. We recommend using **Option A** for significantly faster dependency installation and execution.
 
+#### Option A: Fast Setup with `uv` (Recommended)
+
+**1) Install dependencies:**
+```bash
+uv pip install -r requirements.txt
 ```
+
+**2) Run the API:**
+```bash
+uv run uvicorn main:app --reload --port 8000
+```
+
+**3) Run the UI:**
+```bash
+uv run streamlit run streamlit_app.py
+```
+
+---
+
+#### Option B: Standard Setup with `pip`
+
+**1) Install dependencies:**
+```bash
 pip install -r requirements.txt
 ```
 
-### 3) Run the API
-
-```
+**2) Run the API:**
+```bash
 uvicorn main:app --reload --port 8000
 ```
 
-### 4) Run the UI
-
-```
+**3) Run the UI:**
+```bash
 streamlit run streamlit_app.py
 ```
 
