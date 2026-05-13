@@ -1,7 +1,7 @@
 
 # NileTel Arabic AI Assistant
 
-![Python](https://img.shields.io/badge/Python-3.14%2B-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688?logo=fastapi&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.57-FF4B4B?logo=streamlit&logoColor=white)
 ![FAISS](https://img.shields.io/badge/FAISS-CPU-2C2D72)
@@ -14,7 +14,7 @@ Experience the NileTel Arabic AI Assistant in action!
 
 👉 <b><a href="https://telecom-rag-system.streamlit.app/" style="color: #007bff; text-decoration: none;">Launch the Live Demo Here</a></b>
 
-RAG-based telecom support assistant for Arabic and English with hybrid retrieval, query rewriting, and ticket automation. The UI is built with Streamlit and the API runs on FastAPI. Ticket creation is triggered automatically via n8n when the answer implies an action, and the UI asks for the user name only in those cases.
+RAG-based telecom support assistant for Arabic and English with hybrid retrieval, query rewriting, and ticket automation. The UI is built with Streamlit and the FastAPI backend is deployed on Hugging Face. Ticket creation is triggered automatically via n8n when the answer implies an action, and the UI asks for the user name only in those cases.
 
 ## Features
 
