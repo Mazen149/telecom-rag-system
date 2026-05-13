@@ -8,7 +8,7 @@ import json
 # 🔗 API & Sheet URLs
 # =========================
 # The FastAPI endpoint
-API_URL = "https://1943-156-218-66-1.ngrok-free.app/ask"
+API_URL = "https://mazen248-telecom-rag-fastapi.hf.space/ask"
 
 # The Google Sheet CSV export link
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1qgwJYpHE6ehE242_CUC9-iH0SLDK-VPKtp1VDIp4Rqs/export?format=csv&gid=0"
