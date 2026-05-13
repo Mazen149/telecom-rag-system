@@ -1,0 +1,17 @@
+[project]
+name = "rag-github"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "faiss-cpu==1.13.2",
+    "fastapi==0.136.1",
+    "groq==1.2.0",
+    "numpy==2.4.4",
+    "python-dotenv==1.2.2",
+    "requests==2.34.0",
+    "sentence-transformers==5.5.0",
+    "streamlit==1.57.0",
+    "uvicorn==0.46.0",
+]

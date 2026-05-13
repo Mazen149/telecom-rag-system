@@ -1,0 +1,9 @@
+fastapi==0.136.1
+uvicorn==0.46.0
+streamlit==1.57.0
+sentence-transformers==5.5.0
+faiss-cpu==1.13.2
+numpy==2.4.4
+python-dotenv==1.2.2
+requests==2.34.0
+groq==1.2.0
