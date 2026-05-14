@@ -444,12 +444,6 @@ elif page == "🎫 Tickets Table":
     st.markdown("### 🎫 Tickets Table")
     st.markdown("<p style='color:#5a5a5a; margin-bottom: 20px;'>View and manage all telecom support tickets fetched live from the central system.</p>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns([8, 2])
-    with col2:
-        if st.button("🔄 Refresh Data", use_container_width=True):
-            st.session_state.tickets_refresh += 1
-
-    @st.cache_data(show_spinner=False)
     def _load_tickets(url, refresh_token):
         return pd.read_csv(url)
 
