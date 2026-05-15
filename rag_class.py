@@ -278,6 +278,9 @@ class TelecomRAG:
 
         return False
 
+    def _ticket_fixed_message(self):
+        return "تمام يا فندم، تم تسجيل طلبك لفتح تذكرة وسيتم التواصل معك في أقرب وقت ممكن."
+
     def _bm25_scores(self, query_tokens, k1=1.5, b=0.75):
         if not self._lexical_ready:
             self._build_lexical_index()
@@ -534,9 +537,15 @@ class TelecomRAG:
     def generate_answer(self, query, retrieved_results, route="chat"):
         """Takes the user query and the retrieved chunks, sends it to Groq, and returns the final answer."""
         if not retrieved_results:
+            if route == "ticket":
+                return {
+                    "answer": self._ticket_fixed_message(),
+                    "needs_action": "YES",
+                    "sources": []
+                }
             return {
                 "answer": "مش متأكد من البيانات المتاحة يا فندم بخصوص الموضوع ده.",
-                "needs_action": "YES" if route == "ticket" else "NO",
+                "needs_action": "NO",
                 "sources": []
             }
 
@@ -592,9 +601,16 @@ class TelecomRAG:
         # Fallbacks: if route is ticket, force action. Or if answer implies action
         if route == "ticket" or self._answer_implies_action(clean_answer):
             needs_action = "YES"
-            
+
+        if needs_action == "YES":
+            return {
+                "answer": self._ticket_fixed_message(),
+                "needs_action": "YES",
+                "sources": []
+            }
+
         sources = list(set([res["source"] for res in retrieved_results]))
-        
+
         return {
             "answer": clean_answer,
             "needs_action": needs_action,
