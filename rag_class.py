@@ -442,21 +442,27 @@ class TelecomRAG:
         """
         q = query.strip()
         q_norm = re.sub(r'[^\w\s]', '', q) # remove punctuation
+        
+        # Text normalization
+        q_norm = re.sub(r"[\u0617-\u061A\u064B-\u0652]", "", q_norm) # Remove diacritics
+        q_norm = q_norm.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
+        q_norm = q_norm.replace("ى", "ي").replace("ة", "ه")
         q_norm = re.sub(r'\s+', ' ', q_norm).strip()
+        q_norm = q_norm.lower()
         
         # 1. Rule-based routing
         greetings = [
-            "ازيك", "ازيكك", "عامل ايه", "عامل اي", "اخبارك", "أخبارك",
+            "ازيك", "ازيكك", "عامل ايه", "عامل اي", "اخبارك",
             "عامله ايه", "عامله اي", "كيفك", "كيف الحال", "شو اخبارك",
-            "مرحبا", "اهلا", "أهلا", "اهلا بيك", "أهلاً", "هلا", "هلا والله",
-            "اهلين", "أهلين", "يا هلا", "نورت",
+            "مرحبا", "اهلا", "اهلا بيك", "هلا", "هلا والله",
+            "اهلين", "يا هلا", "نورت",
             "السلام عليكم", "وعليكم السلام", "سلام", "سلام عليكم",
             "السلام", "سلامو", "سلامات",
             "صباح الخير", "صباح النور", "صباحو",
             "مساء الخير", "مساء النور",
             "hello", "hi", "hey", "hey there", "hola",
             "good morning", "good evening", "good afternoon",
-            "yo", "sup", "what's up", "whats up"
+            "yo", "sup", "whats up"
         ]
         
         tokens = q_norm.split()
@@ -465,32 +471,45 @@ class TelecomRAG:
         if is_greeting_exact or is_greeting_short:
             return "greeting"
         
-        out_of_scope = [
-            "سياسة", "سياسي", "حكومة", "رئيس", "وزير", "انتخابات", "برلمان",
-            "رياضة", "كورة", "كرة", "ماتش", "مباراة", "لاعب", "مدرب",
-            "دوري", "كاس", "بطولة", "هدف", "جون",
-            "اكل", "أكل", "طبخ", "وصفة", "وصفات", "مطعم", "اكلات",
-            "فطار", "غدا", "عشا", "عشاء", "حلويات", "مشروب",
-            "مسلسل", "فيلم", "افلام", "أفلام", "ممثل", "ممثلة",
-            "اغاني", "أغاني", "اغنية", "أغنية", "مغني", "موسيقى",
-            "اقتصاد", "بورصة", "دولار", "ذهب", "اسهم", "أسهم",
-            "عملة", "بنك", "تجارة", "استثمار",
-            "طقس", "جو", "حر", "برد", "مطر",
-            "سفر", "رحلة", "فندق", "طيران",
-            "لعبة", "العاب", "ألعاب", "جيم", "game"
+        in_scope = [
+            "اتصالات", "انترنت", "نت", "باقه", "فاتوره", "رصيد", "شحن", "خط",
+            "راوتر", "شبكه", "تغطيه", "عطل", "مشكله", "صيانه", "فني", "مهندس",
+            "خدمه عملاء", "شكوي", "تذكره", "اشتراك", "الغاء", "تجديد",
+            "ميجا", "جيجا", "سرعه", "تحميل", "ابلود", "بنج",
+            "4g", "5g", "3g", "lte", "wifi", "واي فاي", "dsl", "adsl", "vdsl", "ftth", "فايبر",
+            "niletel", "نايل تيل"
         ]
-        out_of_scope_hits = [token for token in tokens if token in out_of_scope]
-        out_of_scope_ratio = (len(out_of_scope_hits) / len(tokens)) if tokens else 0.0
-        is_out_of_scope_short = len(tokens) <= 3 and len(out_of_scope_hits) > 0
-        is_out_of_scope_heavy = out_of_scope_ratio >= 0.5
-        if is_out_of_scope_short or is_out_of_scope_heavy:
-            return "out_of_scope"
+        in_scope_hits = [token for token in tokens if token in in_scope]
+        in_scope_phrases = [k for k in in_scope if " " in k]
+        has_in_scope = len(in_scope_hits) > 0 or any(phrase in q_norm for phrase in in_scope_phrases)
+
+        if not has_in_scope:
+            out_of_scope = [
+                "سياسه", "سياسي", "حكومه", "رئيس", "وزير", "انتخابات", "برلمان",
+                "رياضه", "كوره", "كره", "ماتش", "مباراه", "لاعب", "مدرب",
+                "دوري", "كاس", "بطوله", "هدف", "جون",
+                "اكل", "طبخ", "وصفه", "وصفات", "مطعم", "اكلات",
+                "فطار", "غدا", "عشا", "عشاء", "حلويات", "مشروب",
+                "مسلسل", "فيلم", "افلام", "ممثل", "ممثله",
+                "اغاني", "اغنيه", "مغني", "موسيقي",
+                "اقتصاد", "بورصه", "دولار", "ذهب", "اسهم",
+                "عمله", "بنك", "تجاره", "استثمار",
+                "طقس", "جو", "حر", "برد", "مطر",
+                "سفر", "رحله", "فندق", "طيران",
+                "لعبه", "العاب", "جيم", "game"
+            ]
+            out_of_scope_hits = [token for token in tokens if token in out_of_scope]
+            out_of_scope_ratio = (len(out_of_scope_hits) / len(tokens)) if tokens else 0.0
+            is_out_of_scope_short = len(tokens) <= 3 and len(out_of_scope_hits) > 0
+            is_out_of_scope_heavy = out_of_scope_ratio >= 0.5
+            if is_out_of_scope_short or is_out_of_scope_heavy:
+                return "out_of_scope"
 
         ticket_keywords = [
-            "تصعيد", "مهندس", "تذكرة", "شكوى", "فني", "مندوب",
-            "صيانة", "عطل", "بايظ", "مقطوع",
-            "عمل تذكرة", "رفع تذكرة", "ابعت مهندس",
-            "ابعت فني", "عايز اشتكي", "سجل شكوى",
+            "تصعيد", "مهندس", "تذكره", "شكوي", "فني", "مندوب",
+            "صيانه", "عطل", "بايظ", "مقطوع",
+            "عمل تذكره", "رفع تذكره", "ابعت مهندس",
+            "ابعت فني", "عايز اشتكي", "سجل شكوي",
             "النت فاصل", "النت قاطع"
         ]
 
@@ -504,6 +523,9 @@ class TelecomRAG:
         is_ticket_short = len(tokens) <= 3 and len(ticket_term_hits) > 0
         if is_ticket_short:
             return "ticket"
+
+        if has_in_scope:
+            return "chat"
 
         # 2. LLM-based routing for ambiguous cases
         try:

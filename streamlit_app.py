@@ -231,11 +231,18 @@ st.markdown(
     }
 
     /* Streamlit overrides */
+    div[data-testid="InputInstructions"] {
+        display: none !important;
+    }
+    
     .stTextInput input {
+        direction: rtl !important;
+        text-align: right !important;
         border-radius: var(--radius-md) !important;
         border: 1px solid rgba(0,0,0,0.1) !important;
-        padding: 16px 20px !important;
-        font-size: 1.1rem !important;
+        padding: 10px 15px !important;
+        font-size: 1rem !important;
+        height: 48px !important;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
         transition: all 0.3s ease !important;
     }
@@ -246,12 +253,13 @@ st.markdown(
 
     .stButton > button {
         width: 100%;
+        height: 48px !important;
         border-radius: var(--radius-md);
         border: none;
-        padding: 14px 24px;
+        padding: 10px 15px;
         background: var(--primary-gradient);
         color: white;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
         box-shadow: 0 8px 20px rgba(15, 139, 141, 0.3);
         transition: all 0.3s ease;
@@ -336,7 +344,7 @@ if page == "💬 Chat Assistant":
             <div class="badge-container">
                 <div class="custom-badge">🤖 Llama 3.1 8B</div>
                 <div class="custom-badge">⚡ Hybrid Search</div>
-                <div class="custom-badge">🌍 Arabic Native</div>
+                <div class="custom-badge">🌍 Arabic & English</div>
             </div>
         </div>
         """,
@@ -346,10 +354,11 @@ if page == "💬 Chat Assistant":
     st.markdown("### 💬 Ask the AI")
     st.markdown("<p style='color:#5a5a5a; margin-bottom: 20px;'>Type your inquiry in Arabic or English. The AI will respond in a beautifully formatted RTL format.</p>", unsafe_allow_html=True)
     
-    query = st.text_input("Your question...", placeholder="مثال: النت فاصل عندي، ممكن أعمل تذكرة؟", label_visibility="collapsed")
-    
-    # Send button
-    send_clicked = st.button("🚀 Send Message")
+    col_btn, col_input = st.columns([1, 4])
+    with col_input:
+        query = st.text_input("Your question...", placeholder="مثال: النت فاصل عندي، ممكن أعمل تذكرة؟", label_visibility="collapsed")
+    with col_btn:
+        send_clicked = st.button("🚀 Send", use_container_width=True)
 
     if send_clicked:
         if query.strip():
@@ -385,8 +394,11 @@ if page == "💬 Chat Assistant":
         if needs_action == "YES" and not st.session_state.ticket_name:
             render_answer = False
             st.markdown("### Provide your name to create the ticket")
-            ticket_name = st.text_input("Name for ticket", key="ticket_name_input", placeholder="Your name")
-            submit_name = st.button("Submit Name & Create Ticket", key="submit_ticket_name")
+            col_ticket_btn, col_ticket_input = st.columns([1, 4])
+            with col_ticket_input:
+                ticket_name = st.text_input("Name for ticket", key="ticket_name_input", placeholder="الاسم...", label_visibility="collapsed")
+            with col_ticket_btn:
+                submit_name = st.button("Submit", key="submit_ticket_name", use_container_width=True)
 
             if submit_name:
                 if ticket_name.strip():
