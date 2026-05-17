@@ -7,6 +7,7 @@
 ![FAISS](https://img.shields.io/badge/FAISS-CPU-2C2D72)
 ![SentenceTransformers](https://img.shields.io/badge/SentenceTransformers-5.5-0A66C2)
 ![Groq](https://img.shields.io/badge/Groq-LLM-FF6B00)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Automated-2088FF?logo=github-actions&logoColor=white)
 
 ## 🚀 Live Demo
 
@@ -24,6 +25,7 @@ RAG-based telecom support assistant for Arabic and English with hybrid retrieval
 - Action detection to trigger ticket automation
 - Streamlit UI with RTL-friendly answer rendering
 - Caching of embeddings and FAISS index for fast startup
+- CI/CD automation: Automated deployment using GitHub Actions
 
 ## Architecture
 
